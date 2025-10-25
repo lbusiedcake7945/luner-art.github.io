@@ -4,14 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>luner Art Studio 2.0</title>
-<meta content="Luner Art Studio" property="og:title" />
-<meta content="pixel art yapabilceğiniz güzel bir sitedir **mc luner** tarafından oluşturulmuş resmi bir **mc luner** sitesi" property="og:description" />
-<meta content="https://lbusiedcake7945.github.io/luner-art.github.io" property="og:url" />
-<meta content="https://github.com/lbusiedcake7945/luner-art.github.io/blob/main/retouch_2025052512224544.jpg?raw=true" property="og:image" />
-<meta content="#43B581" data-react-helmet="true" name="theme-color" />
- <link rel="icon"
-href="retouch_2025052512224544.jpg"
-type="image/jpg">
+  <meta content="Luner Art Studio" property="og:title" />
+  <meta content="pixel art yapabilceğiniz güzel bir sitedir **mc luner** tarafından oluşturulmuş resmi bir **mc luner** sitesi" property="og:description" />
+  <meta content="https://lbusiedcake7945.github.io/luner-art.github.io" property="og:url" />
+  <meta content="https://github.com/lbusiedcake7945/luner-art.github.io/blob/main/retouch_2025052512224544.jpg?raw=true" property="og:image" />
+  <meta content="#43B581" data-react-helmet="true" name="theme-color" />
+  <link rel="icon" href="retouch_2025052512224544.jpg" type="image/jpg">
   <style>
     :root {
       --bg-color: #121212;
@@ -32,7 +30,6 @@ type="image/jpg">
       flex-direction: column;
       height: 100vh;
       overflow: hidden;
-      cursor: url('https://github.com/lbusiedcake7945/luner-art/blob/main/New%20Piskel-1.png.png'), auto;
     }
 
     header, footer {
@@ -66,7 +63,7 @@ type="image/jpg">
       max-height: 100%;
       image-rendering: pixelated;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-      cursor: url('https://github.com/lbusiedcake7945/luner-art/blob/main/New%20Piskel-1.png.png'), auto;
+      cursor: url('https://raw.githubusercontent.com/lbusiedcake7945/luner-art.github.io/5ceb412d106e55998b57bb78961955ef8e661294/New%20Piskel-1.png.png'), auto;
     }
 
     input, select, button {
@@ -237,6 +234,17 @@ type="image/jpg">
       height: 100%;
       cursor: pointer;
     }
+
+    .custom-size-input {
+      display: flex;
+      gap: 5px;
+      margin-top: 5px;
+    }
+
+    .custom-size-input input {
+      width: 60px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -249,7 +257,17 @@ type="image/jpg">
       <option value="32">32x32</option>
       <option value="64">64x64</option>
       <option value="128">128x128</option>
+      <option value="custom">Custom</option>
     </select>
+
+    <div id="customSizeContainer" style="display: none;">
+      <div class="custom-size-input">
+        <input type="number" id="customWidth" min="1" max="512" placeholder="Genişlik" value="32">
+        <span>x</span>
+        <input type="number" id="customHeight" min="1" max="512" placeholder="Yükseklik" value="32">
+        <button id="applyCustomSize">Uygula</button>
+      </div>
+    </div>
 
     <input type="color" id="colorPicker" value="#ff0000">
     <div id="selectedColor" title="Renk seç"></div>
@@ -354,7 +372,8 @@ type="image/jpg">
   <div class="settings-group">
     <h4>Tema</h4>
     <div class="theme-selector">
-      <div class="theme-option active" style="background: #121212;" data-theme="dark"></div>      <div class="theme-option" style="background: #f5f5f5; border: 1px solid #ddd;" data-theme="light"></div>
+      <div class="theme-option active" style="background: #121212;" data-theme="dark"></div>
+      <div class="theme-option" style="background: #f5f5f5; border: 1px solid #ddd;" data-theme="light"></div>
       <div class="theme-option" style="background: #1e3a8a;" data-theme="blue"></div>
       <div class="theme-option" style="background: #1a2e1a;" data-theme="green"></div>
     </div>
@@ -364,6 +383,25 @@ type="image/jpg">
 </div>
 
 <script>
+  // URL parametrelerini oku
+  function getUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      size: params.get('size'),
+      color: params.get('color')
+    };
+  }
+
+  // URL parametrelerini güncelle
+  function updateUrlParams(size, color) {
+    const params = new URLSearchParams();
+    if (size) params.set('size', size);
+    if (color) params.set('color', color);
+    
+    const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+    window.history.replaceState({}, '', newUrl);
+  }
+
   // Dil desteği
   const translations = {
     tr: {
@@ -394,7 +432,8 @@ type="image/jpg">
         16: "16x16",
         32: "32x32",
         64: "64x64",
-        128: "128x128"
+        128: "128x128",
+        custom: "Custom"
       }
     },
     en: {
@@ -425,7 +464,8 @@ type="image/jpg">
         16: "16x16",
         32: "32x32",
         64: "64x64",
-        128: "128x128"
+        128: "128x128",
+        custom: "Custom"
       }
     },
     es: {
@@ -456,7 +496,8 @@ type="image/jpg">
         16: "16x16",
         32: "32x32",
         64: "64x64",
-        128: "128x128"
+        128: "128x128",
+        custom: "Personalizado"
       }
     },
     fr: {
@@ -487,7 +528,8 @@ type="image/jpg">
         16: "16x16",
         32: "32x32",
         64: "64x64",
-        128: "128x128"
+        128: "128x128",
+        custom: "Personnalisé"
       }
     }
   };
@@ -496,6 +538,10 @@ type="image/jpg">
   const canvas = document.getElementById('pixel-canvas');
   const ctx = canvas.getContext('2d');
   const gridSize = document.getElementById("gridSize");
+  const customSizeContainer = document.getElementById("customSizeContainer");
+  const customWidth = document.getElementById("customWidth");
+  const customHeight = document.getElementById("customHeight");
+  const applyCustomSize = document.getElementById("applyCustomSize");
   const colorPicker = document.getElementById("colorPicker");
   const selectedColor = document.getElementById("selectedColor");
   const clearBtn = document.getElementById("clearBtn");
@@ -536,7 +582,7 @@ type="image/jpg">
   let currentTool = 'pencil';
   let currentLanguage = 'tr';
   let currentBrushSize = 1;
-  let brushShape = 'square';
+  let brushShape = 'circle';
   let isAntiAlias = true;
   let isGridVisible = true;
   let gridLineColor = '#000000';
@@ -552,6 +598,7 @@ type="image/jpg">
 
   // Initialize
   function init() {
+    applyUrlParams();
     initCanvas();
     initColorPalette();
     initEventListeners();
@@ -559,62 +606,137 @@ type="image/jpg">
     updateBrushPreview();
   }
 
+  // URL parametrelerini uygula
+  function applyUrlParams() {
+    const params = getUrlParams();
+    
+    // Size parametresini uygula
+    if (params.size) {
+      if (params.size.includes('x')) {
+        // Custom size formatı: 32x32
+        const [width, height] = params.size.split('x').map(Number);
+        if (width && height && width <= 512 && height <= 512) {
+          customWidth.value = width;
+          customHeight.value = height;
+          gridSize.value = 'custom';
+          customSizeContainer.style.display = 'block';
+        }
+      } else {
+        // Standart size: 16, 32, vb.
+        const size = parseInt(params.size);
+        if ([8, 16, 32, 64, 128].includes(size)) {
+          gridSize.value = size.toString();
+        }
+      }
+    }
+    
+    // Color parametresini uygula
+    if (params.color) {
+      currentColor = params.color;
+      colorPicker.value = currentColor;
+    }
+  }
+
   // Canvas initialization
   function initCanvas() {
-    const size = parseInt(gridSize.value);
-    gridData = Array(size).fill().map(() => Array(size).fill('#FFFFFF'));
+    let width, height;
+    
+    if (gridSize.value === 'custom') {
+      width = parseInt(customWidth.value);
+      height = parseInt(customHeight.value);
+    } else {
+      width = height = parseInt(gridSize.value);
+    }
+    
+    gridData = Array(height).fill().map(() => Array(width).fill('#FFFFFF'));
     resizeCanvas();
     saveState();
+    updateUrlParams(getCurrentSize(), currentColor);
+  }
+
+  // Mevcut boyutu al
+  function getCurrentSize() {
+    if (gridSize.value === 'custom') {
+      return `${customWidth.value}x${customHeight.value}`;
+    }
+    return gridSize.value;
   }
 
   // Resize canvas based on container and zoom
   function resizeCanvas() {
-    const size = parseInt(gridSize.value);
-    const containerSize = Math.min(container.clientWidth, container.clientHeight) - 20;
-    canvasSize = containerSize * zoom;
-    cellSize = canvasSize / size;
+    let width, height;
     
-    canvas.width = canvasSize;
-    canvas.height = canvasSize;
+    if (gridSize.value === 'custom') {
+      width = parseInt(customWidth.value);
+      height = parseInt(customHeight.value);
+    } else {
+      width = height = parseInt(gridSize.value);
+    }
+    
+    const containerSize = Math.min(container.clientWidth, container.clientHeight) - 20;
+    canvasSize = Math.min(containerSize * zoom, 800); // Maksimum 800px
+    cellSize = canvasSize / Math.max(width, height);
+    
+    canvas.width = width;
+    canvas.height = height;
     
     renderCanvas();
   }
 
   // Render canvas with grid and pixels
   function renderCanvas() {
-    const size = parseInt(gridSize.value);
+    let width, height;
     
-    // Clear canvas
-    ctx.fillStyle = '#333';
-    ctx.fillRect(0, 0, canvasSize, canvasSize);
+    if (gridSize.value === 'custom') {
+      width = parseInt(customWidth.value);
+      height = parseInt(customHeight.value);
+    } else {
+      width = height = parseInt(gridSize.value);
+    }
     
-    // Draw pixels
-    for (let y = 0; y < size; y++) {
-      for (let x = 0; x < size; x++) {
-        ctx.fillStyle = gridData[y][x];
-        ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+    // Canvas'ı temizle ve boyutlandır
+    const displayCanvas = document.createElement('canvas');
+    const displayCtx = displayCanvas.getContext('2d');
+    displayCanvas.width = canvasSize;
+    displayCanvas.height = canvasSize;
+    
+    // Arkaplan
+    displayCtx.fillStyle = '#333';
+    displayCtx.fillRect(0, 0, canvasSize, canvasSize);
+    
+    // Pikselleri çiz
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        if (gridData[y] && gridData[y][x]) {
+          displayCtx.fillStyle = gridData[y][x];
+          displayCtx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+        }
       }
     }
     
-    // Draw grid if enabled
-    if (isGridVisible && size <= 64) {
-      ctx.strokeStyle = gridLineColor;
-      ctx.lineWidth = 0.5;
+    // Izgara çiz (eğer aktifse)
+    if (isGridVisible && width <= 64 && height <= 64) {
+      displayCtx.strokeStyle = gridLineColor;
+      displayCtx.lineWidth = 0.5;
       
-      for (let i = 0; i <= size; i++) {
-        // Vertical lines
-        ctx.beginPath();
-        ctx.moveTo(i * cellSize, 0);
-        ctx.lineTo(i * cellSize, canvasSize);
-        ctx.stroke();
-        
-        // Horizontal lines
-        ctx.beginPath();
-        ctx.moveTo(0, i * cellSize);
-        ctx.lineTo(canvasSize, i * cellSize);
-        ctx.stroke();
+      for (let i = 0; i <= width; i++) {
+        displayCtx.beginPath();
+        displayCtx.moveTo(i * cellSize, 0);
+        displayCtx.lineTo(i * cellSize, canvasSize);
+        displayCtx.stroke();
+      }
+      
+      for (let i = 0; i <= height; i++) {
+        displayCtx.beginPath();
+        displayCtx.moveTo(0, i * cellSize);
+        displayCtx.lineTo(canvasSize, i * cellSize);
+        displayCtx.stroke();
       }
     }
+    
+    // Ana canvas'a kopyala
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(displayCanvas, 0, 0, width, height);
   }
 
   // Initialize color palette
@@ -629,6 +751,7 @@ type="image/jpg">
         colorPicker.value = color;
         selectedColor.style.backgroundColor = color;
         updateBrushPreview();
+        updateUrlParams(getCurrentSize(), currentColor);
       });
       colorPalette.appendChild(swatch);
     });
@@ -636,22 +759,31 @@ type="image/jpg">
 
   // Initialize event listeners
   function initEventListeners() {
+    // Grid size değişikliği
+    gridSize.addEventListener("change", () => {
+      if (gridSize.value === 'custom') {
+        customSizeContainer.style.display = 'block';
+      } else {
+        customSizeContainer.style.display = 'none';
+        initCanvas();
+      }
+    });
+
+    // Custom size uygula
+    applyCustomSize.addEventListener('click', initCanvas);
+
     // Color picker
     colorPicker.addEventListener("input", () => {
       currentColor = colorPicker.value;
       selectedColor.style.backgroundColor = currentColor;
       updateBrushPreview();
+      updateUrlParams(getCurrentSize(), currentColor);
     });
 
     // Brush size
     brushSize.addEventListener("input", () => {
       currentBrushSize = parseInt(brushSize.value);
       updateBrushPreview();
-    });
-
-    // Grid size
-    gridSize.addEventListener("change", () => {
-      initCanvas();
     });
 
     // Tools
@@ -755,7 +887,6 @@ type="image/jpg">
     if (!gridPos) return;
     
     const { x, y } = gridPos;
-    const size = parseInt(gridSize.value);
     
     switch (currentTool) {
       case 'pencil':
@@ -768,11 +899,12 @@ type="image/jpg">
         renderCanvas();
         break;
       case 'picker':
-        if (x >= 0 && x < size && y >= 0 && y < size) {
+        if (gridData[y] && gridData[y][x]) {
           currentColor = gridData[y][x];
           colorPicker.value = currentColor;
           selectedColor.style.backgroundColor = currentColor;
           selectTool('pencil');
+          updateUrlParams(getCurrentSize(), currentColor);
         }
         break;
     }
@@ -808,11 +940,19 @@ type="image/jpg">
 
   // Get grid position from canvas coordinates
   function getGridPosition(x, y) {
-    const size = parseInt(gridSize.value);
-    const gridX = Math.floor(x / cellSize);
-    const gridY = Math.floor(y / cellSize);
+    let width, height;
     
-    if (gridX < 0 || gridX >= size || gridY < 0 || gridY >= size) {
+    if (gridSize.value === 'custom') {
+      width = parseInt(customWidth.value);
+      height = parseInt(customHeight.value);
+    } else {
+      width = height = parseInt(gridSize.value);
+    }
+    
+    const gridX = Math.floor(x / (canvas.width / width));
+    const gridY = Math.floor(y / (canvas.height / height));
+    
+    if (gridX < 0 || gridX >= width || gridY < 0 || gridY >= height) {
       return null;
     }
     
@@ -821,7 +961,15 @@ type="image/jpg">
 
   // Apply brush to canvas
   function applyBrush(x, y) {
-    const size = parseInt(gridSize.value);
+    let width, height;
+    
+    if (gridSize.value === 'custom') {
+      width = parseInt(customWidth.value);
+      height = parseInt(customHeight.value);
+    } else {
+      width = height = parseInt(gridSize.value);
+    }
+    
     const halfSize = Math.floor(currentBrushSize / 2);
     const color = currentTool === 'eraser' ? '#FFFFFF' : currentColor;
     let changed = false;
@@ -837,7 +985,7 @@ type="image/jpg">
           if (distance > halfSize + 0.5) continue;
         }
         
-        if (nx >= 0 && nx < size && ny >= 0 && ny < size) {
+        if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
           if (gridData[ny][nx] !== color) {
             gridData[ny][nx] = color;
             changed = true;
@@ -853,10 +1001,17 @@ type="image/jpg">
 
   // Flood fill algorithm
   function floodFill(x, y, targetColor, replacementColor) {
-    const size = parseInt(gridSize.value);
+    let width, height;
+    
+    if (gridSize.value === 'custom') {
+      width = parseInt(customWidth.value);
+      height = parseInt(customHeight.value);
+    } else {
+      width = height = parseInt(gridSize.value);
+    }
     
     if (targetColor === replacementColor) return;
-    if (x < 0 || x >= size || y < 0 || y >= size) return;
+    if (x < 0 || x >= width || y < 0 || y >= height) return;
     if (gridData[y][x] !== targetColor) return;
     
     gridData[y][x] = replacementColor;
@@ -877,17 +1032,49 @@ type="image/jpg">
 
   // Clear canvas
   function clearCanvas() {
-    const size = parseInt(gridSize.value);
-    gridData = Array(size).fill().map(() => Array(size).fill('#FFFFFF'));
+    let width, height;
+    
+    if (gridSize.value === 'custom') {
+      width = parseInt(customWidth.value);
+      height = parseInt(customHeight.value);
+    } else {
+      width = height = parseInt(gridSize.value);
+    }
+    
+    gridData = Array(height).fill().map(() => Array(width).fill('#FFFFFF'));
     saveState();
     renderCanvas();
   }
 
   // Download canvas as PNG
   function downloadCanvas() {
+    // Geçici canvas oluştur
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d');
+    
+    let width, height;
+    
+    if (gridSize.value === 'custom') {
+      width = parseInt(customWidth.value);
+      height = parseInt(customHeight.value);
+    } else {
+      width = height = parseInt(gridSize.value);
+    }
+    
+    tempCanvas.width = width;
+    tempCanvas.height = height;
+    
+    // Pikselleri geçici canvasa çiz
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        tempCtx.fillStyle = gridData[y][x];
+        tempCtx.fillRect(x, y, 1, 1);
+      }
+    }
+    
     const link = document.createElement('a');
     link.download = 'pixel-art.png';
-    link.href = canvas.toDataURL('image/png');
+    link.href = tempCanvas.toDataURL('image/png');
     link.click();
   }
 
@@ -900,25 +1087,33 @@ type="image/jpg">
     reader.onload = function(event) {
       const img = new Image();
       img.onload = function() {
+        let width, height;
+        
+        if (gridSize.value === 'custom') {
+          width = parseInt(customWidth.value);
+          height = parseInt(customHeight.value);
+        } else {
+          width = height = parseInt(gridSize.value);
+        }
+        
         // Create temporary canvas to process image
         const tempCanvas = document.createElement('canvas');
         const tempCtx = tempCanvas.getContext('2d');
-        const size = parseInt(gridSize.value);
         
-        tempCanvas.width = size;
-        tempCanvas.height = size;
+        tempCanvas.width = width;
+        tempCanvas.height = height;
         
         // Draw image to temp canvas (scaled to grid size)
-        tempCtx.drawImage(img, 0, 0, size, size);
+        tempCtx.drawImage(img, 0, 0, width, height);
         
         // Get pixel data
-        const imageData = tempCtx.getImageData(0, 0, size, size);
+        const imageData = tempCtx.getImageData(0, 0, width, height);
         const data = imageData.data;
         
         // Convert to our grid format
-        for (let y = 0; y < size; y++) {
-          for (let x = 0; x < size; x++) {
-            const i = (y * size + x) * 4;
+        for (let y = 0; y < height; y++) {
+          for (let x = 0; x < width; x++) {
+            const i = (y * width + x) * 4;
             const r = data[i];
             const g = data[i + 1];
             const b = data[i + 2];
@@ -948,8 +1143,16 @@ type="image/jpg">
     history = history.slice(0, historyIndex + 1);
     
     // Save current state
-    const size = parseInt(gridSize.value);
-    const state = Array(size).fill().map((_, y) => [...gridData[y]]);
+    let width, height;
+    
+    if (gridSize.value === 'custom') {
+      width = parseInt(customWidth.value);
+      height = parseInt(customHeight.value);
+    } else {
+      width = height = parseInt(gridSize.value);
+    }
+    
+    const state = Array(height).fill().map((_, y) => [...gridData[y]]);
     history.push(state);
     historyIndex++;
     
@@ -977,9 +1180,17 @@ type="image/jpg">
   }
 
   function applyState(state) {
-    const size = parseInt(gridSize.value);
-    for (let y = 0; y < size; y++) {
-      for (let x = 0; x < size; x++) {
+    let width, height;
+    
+    if (gridSize.value === 'custom') {
+      width = parseInt(customWidth.value);
+      height = parseInt(customHeight.value);
+    } else {
+      width = height = parseInt(gridSize.value);
+    }
+    
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
         gridData[y][x] = state[y][x];
       }
     }
